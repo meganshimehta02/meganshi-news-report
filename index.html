@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Intelligence Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --text: #eaeaea;
+            --text-dark: #2a2a2a;
+            --bg: #0f1419;
+            --card-bg: #1a2332;
+            --border: #2d3e50;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #1a2332 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #e94560, #0f3460);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .search-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .search-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        input, select {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--highlight);
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+        }
+
+        .today-section {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--card-bg) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .today-label {
+            color: var(--highlight);
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .report-title {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .report-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            padding: 10px 20px;
+            background: rgba(233, 69, 96, 0.1);
+            border-left: 3px solid var(--highlight);
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .meta-label {
+            color: #888;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .analysis-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(15, 52, 96, 0.3);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+        }
+
+        .analysis-title {
+            font-size: 1.3em;
+            color: var(--highlight);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .analysis-content {
+            font-size: 1em;
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        .sub-stories {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sub-story {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sub-story:hover {
+            border-color: var(--highlight);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.2);
+        }
+
+        .sub-story-title {
+            padding: 15px 20px;
+            background: rgba(233, 69, 96, 0.1);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sub-story-toggle {
+            transition: transform 0.3s ease;
+            width: 20px;
+            height: 20px;
+        }
+
+        .sub-story.expanded .sub-story-toggle {
+            transform: rotate(180deg);
+        }
+
+        .sub-story-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .sub-story.expanded .sub-story-content {
+            max-height: 500px;
+            padding: 20px;
+        }
+
+        .sources {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(15, 52, 96, 0.3);
+            border-radius: 8px;
+        }
+
+        .sources h4 {
+            color: var(--highlight);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .sources-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .source-tag {
+            padding: 8px 15px;
+            background: var(--accent);
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #fff;
+        }
+
+        .archive-section {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid var(--border);
+        }
+
+        .archive-title {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .report-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .report-item:hover {
+            border-color: var(--highlight);
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.2);
+        }
+
+        .report-item-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .report-item-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+            color: #888;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .cat-geopolitics { background: rgba(220, 53, 69, 0.3); color: #ff6b6b; }
+        .cat-finance { background: rgba(40, 167, 69, 0.3); color: #51cf66; }
+        .cat-business { background: rgba(0, 123, 255, 0.3); color: #74c0fc; }
+        .cat-marketing { background: rgba(255, 193, 7, 0.3); color: #ffd43b; }
+        .cat-fashion { background: rgba(233, 30, 99, 0.3); color: #ff5ba3; }
+        .cat-technology { background: rgba(156, 39, 176, 0.3); color: #da77f2; }
+        .cat-startups { background: rgba(255, 87, 34, 0.3); color: #ffa94d; }
+        .cat-india { background: rgba(63, 81, 181, 0.3); color: #91d4ff; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #ff6b6b;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .report-title { font-size: 1.5em; }
+            .today-section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 World Intelligence Report</h1>
+            <p class="subtitle">Daily analysis of global news from 60 credible sources</p>
+        </header>
+
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Search by title or keywords...">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="Geopolitics & Wars">Geopolitics & Wars</option>
+                <option value="Global Finance">Global Finance</option>
+                <option value="Business & Economy">Business & Economy</option>
+                <option value="Marketing & Advertising">Marketing & Advertising</option>
+                <option value="Fashion, Luxury & Retail">Fashion, Luxury & Retail</option>
+                <option value="Technology & AI">Technology & AI</option>
+                <option value="Startups & VC">Startups & VC</option>
+                <option value="Indian Affairs">Indian Affairs</option>
+            </select>
+        </div>
+
+        <div id="todayReport" class="today-section">
+            <div class="loading">Loading today's report...</div>
+        </div>
+
+        <div class="archive-section">
+            <h2 class="archive-title">📰 Report Archive</h2>
+            <div id="archiveReports">
+                <div class="loading">Loading archive...</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Last updated: <span id="lastUpdated">-</span></p>
+        <p>Data sources: Reuters, AP, BBC, Bloomberg, TechCrunch, and 55+ more credible outlets</p>
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://caqnwlttyfqckzkdnqyd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eE5w3_I9AVBKbbDliGCR6w_g3TyFC6m';
+
+        let allReports = [];
+
+        async function fetchReports() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/reports?order=report_date.desc`, {
+                    headers: {
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'apikey': SUPABASE_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                allReports = await response.json();
+                console.log('Reports loaded:', allReports);
+
+                if (allReports.length > 0) {
+                    displayTodayReport(allReports[0]);
+                    displayArchive(allReports);
+                    document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString();
+                } else {
+                    document.getElementById('todayReport').innerHTML = '<div class="error">No reports available yet. Check back soon!</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+                document.getElementById('todayReport').innerHTML = `<div class="error">Error loading reports: ${error.message}</div>`;
+                document.getElementById('archiveReports').innerHTML = `<div class="error">Error loading archive: ${error.message}</div>`;
+            }
+        }
+
+        function displayTodayReport(report) {
+            if (!report) return;
+
+            const html = `
+                <div class="today-label">📌 Today's Major Report</div>
+                <div class="report-title">${report.title || 'Untitled'}</div>
+                <div class="report-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Date</span>
+                        ${report.report_date || 'N/A'}
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Category</span>
+                        ${report.category || 'General'}
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Impact Score</span>
+                        ${report.impact_score || 'N/A'} / 10
+                    </div>
+                </div>
+
+                ${renderAnalysis(report.full_analysis)}
+
+                ${report.sub_stories ? renderSubStories(report.sub_stories) : ''}
+
+                ${report.sources_used ? `
+                    <div class="sources">
+                        <h4>📚 Sources Used</h4>
+                        <div class="sources-list">
+                            ${renderSources(report.sources_used)}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('todayReport').innerHTML = html;
+        }
+
+        function renderAnalysis(analysis) {
+            if (!analysis) return '';
+
+            const sections = [
+                { key: 'what', label: '1️⃣ WHAT' },
+                { key: 'why', label: '2️⃣ WHY' },
+                { key: 'history', label: '3️⃣ HISTORY' },
+                { key: 'stakeholders', label: '4️⃣ STAKEHOLDERS' },
+                { key: 'impact', label: '5️⃣ IMPACT' },
+                { key: 'what_next', label: '6️⃣ WHAT NEXT' },
+                { key: 'business_lesson', label: '7️⃣ BUSINESS LESSON' },
+                { key: 'think', label: '8️⃣ THINK' }
+            ];
+
+            let html = '';
+            if (typeof analysis === 'string') {
+                try {
+                    analysis = JSON.parse(analysis);
+                } catch (e) {
+                    return `<div class="analysis-section"><div class="analysis-content">${analysis}</div></div>`;
+                }
+            }
+
+            sections.forEach(section => {
+                const content = analysis[section.key] || '';
+                if (content) {
+                    html += `
+                        <div class="analysis-section">
+                            <div class="analysis-title">${section.label}</div>
+                            <div class="analysis-content">${content}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            return html;
+        }
+
+        function renderSubStories(subStories) {
+            let stories = subStories;
+            if (typeof subStories === 'string') {
+                try {
+                    stories = JSON.parse(subStories);
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            if (!Array.isArray(stories) || stories.length === 0) return '';
+
+            let html = '<div class="sub-stories"><h3 style="color: var(--highlight); margin-bottom: 20px;">📌 Related Stories</h3>';
+            stories.forEach((story, i) => {
+                html += `
+                    <div class="sub-story" onclick="this.classList.toggle('expanded')">
+                        <div class="sub-story-title">
+                            ${story}
+                            <span class="sub-story-toggle">▼</span>
+                        </div>
+                        <div class="sub-story-content">
+                            ${story}
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function renderSources(sources) {
+            let sourceList = sources;
+            if (typeof sources === 'string') {
+                try {
+                    sourceList = JSON.parse(sources);
+                } catch (e) {
+                    sourceList = sources.split(',').map(s => s.trim());
+                }
+            }
+
+            if (!Array.isArray(sourceList)) {
+                sourceList = [sources];
+            }
+
+            return sourceList.map(source => `<span class="source-tag">${source}</span>`).join('');
+        }
+
+        function displayArchive(reports) {
+            const filtered = reports.slice(1);
+            if (filtered.length === 0) {
+                document.getElementById('archiveReports').innerHTML = '<p style="color: #888;">No archived reports yet.</p>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(report => {
+                const categoryClass = `cat-${report.category.toLowerCase().replace(/\s+&\s+/g, '-').replace(/\s+/g, '-')}`;
+                html += `
+                    <div class="report-item" onclick="expandReport(this)">
+                        <div class="report-item-title">${report.title}</div>
+                        <div class="report-item-meta">
+                            <span class="category-badge ${categoryClass}">${report.category}</span>
+                            <span>${report.report_date}</span>
+                            <span>Impact: ${report.impact_score}/10</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('archiveReports').innerHTML = html;
+        }
+
+        function expandReport(element) {
+            element.style.background = 'rgba(233, 69, 96, 0.1)';
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', filterReports);
+        document.getElementById('categoryFilter').addEventListener('change', filterReports);
+
+        function filterReports() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+
+            const filtered = allReports.filter(report => {
+                const matchesSearch = !searchTerm || 
+                    (report.title && report.title.toLowerCase().includes(searchTerm)) ||
+                    (report.full_analysis && report.full_analysis.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = !categoryFilter || report.category === categoryFilter;
+                
+                return matchesSearch && matchesCategory;
+            });
+
+            if (filtered.length > 0) {
+                displayTodayReport(filtered[0]);
+                displayArchive(filtered);
+            }
+        }
+
+        fetchReports();
+    </script>
+</body>
+</html>
